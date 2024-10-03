@@ -28,8 +28,12 @@ const start = async () => {
 
         startBot();
 
+        app.get('/', (req, res) => {
+            res.send('Server is running!')
+        })
+
         setInterval(() => {
-            axios.get('https://pinup-bek.onrender.com/api/product')
+            axios.get('https://wangabletech-bek.onrender.com')
                 .then(() => console.log('Pinged server'))
                 .catch(err => console.error(err));
         }, 5 * 60 * 1000);
