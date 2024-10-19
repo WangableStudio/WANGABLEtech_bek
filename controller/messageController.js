@@ -1,5 +1,5 @@
-// const { bot } = require('../bot');
-// const ApiError = require('../error/ApiError');
+const { bot } = require('../bot');
+const ApiError = require('../error/ApiError');
 
 class MessageController {
     async error(req, res, next) {
@@ -12,7 +12,7 @@ class MessageController {
 
             const errorMessageCompact = `⚠️ Ошибка от пользователя: \n - User ID: ${userId} \n - Сообщение: ${message} \n - Детали ошибки: ${error ? error.message : 'Нет деталей'}`;
 
-            // bot.sendMessage(process.env.ADMIN_TELEGRAM_ID, errorMessageCompact)
+            bot.sendMessage(process.env.ADMIN_TELEGRAM_ID, errorMessageCompact)
 
             return res.json('Сообщение об ошибке отправлено, в скором времени все исправят')
         } catch (err) {
