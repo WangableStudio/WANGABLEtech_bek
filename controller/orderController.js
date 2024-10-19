@@ -61,7 +61,7 @@ class OrderController {
                 `\n\n👍 Спасибо, что выбрали нас! Если у вас возникнут вопросы, мы всегда рады помочь. 💬`;
 
             // Отправляем сообщение об успешном заказе
-            await bot.sendMessage(userId, successMessage, { parse_mode: 'HTML' });
+            await bot.sendMessage(process.env.ADMIN_TELEGRAM_ID, successMessage, { parse_mode: 'HTML' });
 
             // Объединяем количество и цену с правильным форматированием
             const formattedPrice = `${total} ✖️ ${Number(checkProduct.price).toLocaleString()} = ${(total * checkProduct.price).toLocaleString()} сум`;
@@ -103,7 +103,7 @@ class OrderController {
             };
 
             // Отправляем сообщение с деталями заказа
-            await bot.sendMessage(userId, productMessage, options);
+            await bot.sendMessage(process.env.ADMIN_TELEGRAM_ID, productMessage, options);
             // await bot.sendPhoto(process.env.ADMIN_TELEGRAM_ID, 'http://localhost:4000' + productImage, {
             //     caption: productMessage,
             //     parse_mode: 'HTML',
