@@ -16,7 +16,7 @@ function authMiddleware(req, res, next) {
         next(); // Переходим к следующему middleware или обработчику
     } catch (error) {
         return res.status(403).json({ message: 'Invalid token' });
-    }
+    }   
 }
 
 module.exports = authMiddleware;

@@ -25,7 +25,8 @@ class CategoryController {
     async getAll(req, res, next) {
         try {
             const category = await Category.findAll({ include: { model: Product } });
-            res.json(category)
+            const url = process.env.BEKURL
+            res.render('categories', { category, url })
         } catch (err) {
             return next(ApiError.badRequest(err.message))
         }

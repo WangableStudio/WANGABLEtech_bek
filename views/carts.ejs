@@ -1,0 +1,27 @@
+<% carts.forEach(cart=> { %>
+<div id="<%= cart.id %>" data-product-id="<%= cart.product.id %>" class="product">
+    <div class="product__title">
+        <img class="product__image" id="<%= cart.productColor %>" src="<%= cart.productImage ? url + cart.productImage : 'https://melanos.ru/content/files/catalog1/m01_1702638103.jpg' %>" alt="">
+        <h2 class="product__name">
+            <%= cart.product.name %>
+        </h2>
+    </div>
+    <div class="product__more">
+        <div class="product__quantity">
+            <span class="minus">-</span>
+            <input class="quantity" type="number" name="quantity" value="<%= cart.quantity %>">
+            <span class="plus">+</span>
+        </div>
+        <div class="product__price">
+            <h3><span class="price">
+                    <%= cart.product.price.toLocaleString() %>
+                </span> | <span class="total <%= cart.product.total === 0 ? 'havenot' : 'have' %>">
+                    <%= cart.product.total %> шт
+                </span></h3>
+        </div>
+        <div title="Удалить" class="product__remove tt">
+            ✕
+        </div>
+    </div>
+</div>
+<% }) %>

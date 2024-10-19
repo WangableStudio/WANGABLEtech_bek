@@ -1,0 +1,25 @@
+<% products.forEach(product => { %>
+    <% const firstColorId = product.colors.length > 0 ? product.colors[0].color : ''; %>
+    <div id="<%= product.id %>" class="products__item">
+        <img class="product__item-image" src="<%= product.image ? url + '/' + product.image : 'https://melanos.ru/content/files/catalog1/m01_1702638103.jpg' %>"
+            alt="<%= product.name %>" id="<%= firstColorId %>">
+        <div class="product__item-info">
+            <h2 class="product__title"><%= product.name %></h2>
+            <p><%= product.description %></p>
+            <div class="products__item-colors">
+                <% product.colors.forEach(color => { %>
+                    <div class="products__item-color" id="<%= color.color %>" data-image="<%= url + color.preview %>" style="background-color: <%= color.colorHex %>" ></div>
+                <% }) %>
+            </div>
+            <div class="products__item-btn">
+                <h3>
+                    <span><%= product.price.toLocaleString() %> сум</span> | 
+                    <span class="<%= product.total === 0 ? 'havenot' : 'have' %>">
+                        <%= product.total %> шт
+                    </span>
+                </h3>
+                <button class="<%= product.total === 0 ? 'products__item-btn-null' : 'products__item-btn-add' %>">В корзину</button>
+            </div>
+        </div>
+    </div>
+<% }) %>

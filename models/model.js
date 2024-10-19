@@ -10,9 +10,26 @@ const User = sequelize.define('user', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    secondName: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    phone: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true
+    },
     img: {
         type: DataTypes.STRING,
         allowNull: true
+    },
+    deleted: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     },
     status: {
         type: DataTypes.STRING,
@@ -46,6 +63,10 @@ const Product = sequelize.define('product', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    image: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     price: {
         type: DataTypes.INTEGER,
         allowNull: false
@@ -70,7 +91,7 @@ const Product = sequelize.define('product', {
 
 const Cart = sequelize.define('cart', {
     id: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.STRING,
         allowNull: false,
         primaryKey: true,
     },
@@ -89,20 +110,40 @@ const Cart = sequelize.define('cart', {
             key: 'id',
         },
         allowNull: false
+    },
+    productColor: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    productImage: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    quantity: {
+        type: DataTypes.SMALLINT,
+        defaultValue: 1
     }
 })
 
 const Color = sequelize.define('color', {
     id: {
         type: DataTypes.STRING,
-        allowNull:false,
+        allowNull: false,
         primaryKey: true,
     },
     color: {
         type: DataTypes.STRING,
         allowNull: false
     },
+    color_ru: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     colorHex: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    preview: {
         type: DataTypes.STRING,
         allowNull: false
     },
@@ -136,6 +177,67 @@ const Image = sequelize.define('image', {
     }
 })
 
+const Order = sequelize.define('order', {
+    id: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+        primaryKey: true,
+    },
+    userId: {
+        type: DataTypes.BIGINT,
+        references: {
+            model: User,
+            key: 'id',
+        },
+        allowNull: false
+    },
+    productId: {
+        type: DataTypes.STRING,
+        references: {
+            model: Product,
+            key: 'id',
+        },
+        allowNull: false
+    },
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    phone: {
+        type: DataTypes.STRING,
+                allowNull: false
+    },
+    address: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    geo: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    total: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+    },
+    status: {
+        type: DataTypes.STRING,
+        defaultValue: 'Обрабатывается'
+    },
+    productColor: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    productImage: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    price: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+})
+
 User.hasMany(Cart, { foreignKey: 'userId' })
 Cart.belongsTo(User, { foreignKey: 'userId' })
 
@@ -151,6 +253,12 @@ Color.belongsTo(Product, { foreignKey: 'productId' })
 Color.hasMany(Image, { foreignKey: 'colorId' })
 Image.belongsTo(Color, { foreignKey: 'colorId' })
 
+User.hasMany(Order, { foreignKey: 'userId' })
+Order.belongsTo(User, { foreignKey: 'userId' })
+
+Product.hasMany(Order, { foreignKey: 'productId' })
+Order.belongsTo(Product, { foreignKey: 'productId' })
+
 module.exports = {
     User,
     Category,
@@ -158,4 +266,5 @@ module.exports = {
     Color,
     Image,
     Cart,
+    Order,
 }

@@ -1,0 +1,6 @@
+<% category.forEach(category=> { %>
+    <div class="catalog__card" data-id="<%=category.id %>" style="background-image: url('<%= url %>/<%= category.image %>');">
+        <div class="catalog__card-background"></div>
+        <span><%= category.name %></span>
+    </div>    
+<% }) %>

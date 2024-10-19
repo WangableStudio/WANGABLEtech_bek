@@ -1,10 +1,33 @@
 // bot.js
+const axios = require('axios');
 const TelegramBot = require('node-telegram-bot-api');
 require('dotenv').config();
 
 // Вставьте сюда токен, который вы получили от BotFather
 const token = process.env.TELEGRAM_BOT_TOKEN;
+const BEK_URL = process.env.BEKURL;
 const bot = new TelegramBot(token, { polling: true });
+
+function getPlaceByCoords(lat, lon) {
+    var url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.address) {
+                var placeName = data.display_name;
+
+                var addressParts = placeName.split(',');
+
+                return addressParts.slice(0, addressParts.length - 3).join(', ').trim();
+            } else {
+                alert('Не удалось определить адрес.');
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка при обратном геокодировании:', error);
+        });
+}
 
 // Начальная клавиатура для выбора языка
 const languageKeyboard = {
@@ -92,14 +115,15 @@ const startBot = () => {
         } else if (text === `Tilni o'zgartirish`) {
             // Вернемся к выбору языка для узбекского
             bot.sendMessage(chatId, 'Tilni tanlang:', languageKeyboard);
-        } else if (text == "🛍 Каталог") {
+        } else if (text === "🛍 Каталог") {
             bot.sendMessage(chatId, 'Откройте для себя мир товаров! Нажмите на кнопку «Заказать» ⬇️ и начните выбирать свои покупки в удобном каталоге.', webAppRussianKeyboard);
-        } else if (text == "🛍 Katalog") {
+        } else if (text === "🛍 Katalog") {
             bot.sendMessage(chatId, 'Tovarlar dunyosini kashf eting! “Buyurtma berish” tugmasini ⬇️ bosing va qulay katalogda xaridlaringizni tanlashni boshlang.', webAppUzbekKeyboard);
         }
     })
 
     bot.on('callback_query', (callbackQuery) => {
+        const msg = callbackQuery.message;
         const chatId = callbackQuery.message.chat.id;
         const callbackData = callbackQuery.data;
 
@@ -107,16 +131,57 @@ const startBot = () => {
             bot.sendMessage(chatId, 'Меню:', dropdownMenu);
         } else if (callbackData === 'start') {
             bot.sendMessage(chatId, 'Команда /start была выбрана.');
-            // Добавьте нужную логику для команды /start
         } else if (callbackData === 'help') {
             bot.sendMessage(chatId, 'Команда /help была выбрана.');
-            // Добавьте нужную логику для команды /help
-        }
+        } else if (callbackData.startsWith('change_location:')) {
+            const orderNumber = callbackData.split(':')[1];
 
-        // Удаляем сообщение, чтобы не отображать кнопку после выбора
+            const locationKeyboard = {
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            {
+                                text: "📍 Выбрать место на карте",
+                                web_app: {
+                                    url: `https://your-web-app-url.com?orderNumber=${orderNumber}`  // Передаем orderNumber в веб-приложение
+                                }
+                            }
+                        ]
+                    ]
+                }
+            };
+
+            bot.sendMessage(chatId, 'Пожалуйста, выберите нужное местоположение на карте:', locationKeyboard);
+        } else if (callbackData.startsWith('cancel_order:')) {
+            const orderNumber = callbackData.split(':')[1];
+            axios.delete(`${BEK_URL}/api/v1/order/${orderNumber}`, {
+                data: {
+                    secretkey: process.env.SECRET_KEY
+                }
+            }).then(res => {
+                if (res.status === 200) {
+                    bot.sendMessage(chatId, `📦 Заказ по номеру: ${orderNumber} был успешно отменен.`);
+                } else {
+                    bot.sendMessage(chatId, `⚠️ Не удалось отменить заказ по номеру: ${orderNumber}. Попробуйте позже.`);
+                }
+            }).catch(err => {
+                console.error('Ошибка при отмене заказа:', err);
+                if (err.response && err.response.status === 404) {
+                    bot.sendMessage(chatId, `❌ Заказ с номером ${orderNumber} не найден.`);
+                } else if (err.response && err.response.status === 500) {
+                    bot.sendMessage(chatId, `🚨 Произошла ошибка на сервере при отмене заказа. Пожалуйста, попробуйте позже.`);
+                } else {
+                    bot.sendMessage(chatId, '⚠️ Не удалось отменить заказ. Пожалуйста, попробуйте снова.');
+                }
+            });
+        }
         bot.answerCallbackQuery(callbackQuery.id);
+    });
+    bot.on('location', async (msg) => {
+        const { latitude, longitude } = msg.location;
+        const placeName = await getPlaceByCoords(latitude, longitude);
+        bot.sendMessage(msg.chat.id, `Вы выбрали место: ${placeName}, ${latitude}, ${longitude}`);
     });
 };
 
-// Экспортируем функцию
-module.exports = startBot;
+module.exports = { startBot, bot };

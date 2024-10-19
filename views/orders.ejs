@@ -1,0 +1,19 @@
+<% orders.forEach(order=> { %>
+<li class="order__item">
+  <div class="order__status">
+    <div class="order__status-color" style="background-color: #209f43"></div>
+    <%= order.status %>
+  </div>
+  <div class="order__item-container">
+    <h2 class="order__number"><%= order.id %></h2>
+    <p class="order__address"><%= order.address %></p>
+    <p class="order__info">
+      <span class="order__info-name"><%= order.product.name %></span>,
+      <span class="order__info-color"><%= order.productColor %></span>,
+      <span class="order__info-total"><%= order.total %> шт</span>
+    </p>
+    <span class="order__date">23.02.23</span>
+    <span class="order__price"><%= order.price.toLocaleString() %> сум</span>
+  </div>
+</li>
+<% }) %>
