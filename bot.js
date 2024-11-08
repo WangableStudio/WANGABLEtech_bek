@@ -73,7 +73,7 @@ const webAppRussianKeyboard = {
             [
                 {
                     text: 'Открыть каталог 🛒',
-                    web_app: { url: 'https://wangable-tech.netlify.app' } // Замените на URL вашего веб-приложения
+                    web_app: { url: 'https://wangabletech.netlify.app' } // Замените на URL вашего веб-приложения
                 }
             ]
         ]
@@ -86,7 +86,7 @@ const webAppUzbekKeyboard = {
             [
                 {
                     text: 'Katalogni ochish 🛒',
-                    web_app: { url: 'https://wangable-tech.netlify.app' } // Замените на URL вашего веб-приложения
+                    web_app: { url: 'https://wangabletech.netlify.app' } // Замените на URL вашего веб-приложения
                 }
             ]
         ]
