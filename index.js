@@ -36,6 +36,10 @@ const start = async () => {
             res.send('Server is running!')
         })
 
+        // const user = await models.User.findByPk(1178572990)
+        // user.status = 'ADMIN'
+        // await user.save()
+
         setInterval(() => {
             axios.get('https://wangabletech-bek.onrender.com')
                 .then(() => console.log('Pinged server'))
